@@ -3,7 +3,24 @@
 
 <di class = "ui main text container segment">
     <div class = "ui huge header"><%= blogData.title %></div>
-       <img src = "<%= blogData.image %>" >
-    <p>  <%= blogData.created %> </p>
-    <p>  <%= blogData.body %> </p>
+    <div class = "ui top attached">
+        <div class = "item">
+       <img class = "ui centered round image" src = "<%= blogData.image %>" >     
+       <div class = "content"> 
+      <span><%= blogData.created.toDateString() %></span> 
+       </div>
+       <div class = "description">
+            <p>  <%- blogData.body %> </p>
+       </div>
+       <a class = "ui orange basic button" href ="/blogs/<%= blogData._id%>/edit">Edit</a>
+       <form action = "/blogs/<%= blogData._id%>?_method=DELETE" method = "POST">
+           <button class = "ui red basic button">Delete</button>
+       </form>
+        </div>
+    </div>
+       
+    
+   
 </di>
+
+<% include partials/footer %>

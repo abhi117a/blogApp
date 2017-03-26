@@ -2,10 +2,12 @@ var express = require("express");
 var app = express();
 var bodyParser = require("body-parser");
 var mongoose = require("mongoose");
+var methodOverride = require("method-override");
 mongoose.connect("mongodb://localhost/blog");
 app.use(bodyParser.urlencoded({extended: true}));
 app.set("view engine", "ejs");
 app.use(express.static("public"));
+app.use(methodOverride("_method"));
 
 
 //Mongoose model config
@@ -92,7 +94,7 @@ Blog.create(req.body.blog, function(err, newBlog){
 app.get("/blogs/:id", function(req, res) {
     Blog.findById(req.params.id, function(err,foundId){
        if(err){
-           res.redirect("/blogs");
+           res.redirect("/blogs")
        } 
        else {
         res.render("show", {blogData: foundId});       
@@ -101,6 +103,53 @@ app.get("/blogs/:id", function(req, res) {
     
 });
 
+//Edit Route///
+////////////////////////////////////////////////////////////////////////////////////////
+
+app.get("/blogs/:id/edit", function(req, res) {
+    Blog.findById(req.params.id, function(err,foundBlog){
+      if(err){
+          res.redirect("/blogs");
+      }
+      else{
+      res.render("edit",{blog:foundBlog})
+      }
+    })
+    
+    
+});
+
+////////////////////////////////////////////////////////////////////////////////////////
+
+//Update the edit. Route///
+////////////////////////////////////////////////////////////////////////////////////////
+
+app.put("/blogs/:id",function(req,res){
+    Blog.findByIdAndUpdate(req.params.id, req.body.blog, function(err,updateBlog){
+        if(err){
+            res.redirect("/blogs");
+        }
+        else {
+            res.redirect("/blogs/"+req.params.id);
+        }
+    });
+});
+////////////////////////////////////////////////////////////////////////////////////////
+
+//Delete Route///
+////////////////////////////////////////////////////////////////////////////////////////
+
+app.delete("/blogs/:id", function(req, res) {
+   Blog.findByIdAndRemove(req.params.id,function(err){
+       if(err){
+           res.redirect("/blogs");
+       }
+       else {
+           res.redirect("/blogs");
+       }
+   });
+    res.send("delete route");
+});
 
 ////////////////////////////////////////////////////////////////////////////////////////
 app.listen(process.env.PORT, process.env.IP, function(){
